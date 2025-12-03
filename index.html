@@ -128,10 +128,18 @@
     // RSS de Radio Ambulante (feed de prueba en español)
     const REAL_RSS = "https://feeds.feedburner.com/radioambulante";
 
-    // Proxy AllOrigins para evitar problemas de CORS
-    const RSS_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(REAL_RSS);
+    // Lista de proxies CORS (se prueban en orden hasta que uno funcione)
+    const PROXIES = [
+      url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+      url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+      url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+      url => url // Último intento: sin proxy
+    ];
 
     const EPISODES_PER_PAGE = 4;
+    
+    // ===== DEBUG MODE =====
+    const DEBUG = true; // Cambia a false en producción
     
     // ===== ELEMENTOS DEL DOM =====
     const episodesContainer = document.getElementById("episodesContainer");
@@ -144,34 +152,79 @@
 
     // ===== FUNCIÓN PRINCIPAL: CARGAR RSS =====
     async function loadEpisodesFromRSS() {
-      try {
-        episodesContainer.innerHTML = '<p class="loading">Cargando episodios...</p>';
-        
-        const response = await fetch(RSS_URL);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const text = await response.text();
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(text, "application/xml");
+      episodesContainer.innerHTML = '<p class="loading">Cargando episodios...</p>';
+      
+      // Intentar con cada proxy hasta que uno funcione
+      for (let i = 0; i < PROXIES.length; i++) {
+        try {
+          const proxyUrl = PROXIES[i](REAL_RSS);
+          
+          if (DEBUG) console.log(`🔄 Intento ${i + 1}/${PROXIES.length}:`, proxyUrl);
+          
+          const response = await fetch(proxyUrl);
+          
+          if (DEBUG) console.log(`📡 Respuesta:`, response.status, response.statusText);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          
+          const text = await response.text();
+          
+          if (DEBUG) console.log("📄 Texto recibido:", text.length, "caracteres");
+          
+          const parser = new DOMParser();
+          const xml = parser.parseFromString(text, "application/xml");
 
-        // Verificar si hay errores en el parsing
-        const parseError = xml.querySelector("parsererror");
-        if (parseError) {
-          throw new Error("Error al parsear el XML del feed");
-        }
+          // Verificar si hay errores en el parsing
+          const parseError = xml.querySelector("parsererror");
+          if (parseError) {
+            if (DEBUG) console.error("❌ Error de parsing");
+            throw new Error("Error al parsear XML");
+          }
 
-        const items = Array.from(xml.querySelectorAll("item"));
-        
-        if (!items.length) {
-          episodesContainer.innerHTML = "<p>No se han encontrado episodios en el feed.</p>";
-          return;
-        }
+          const items = Array.from(xml.querySelectorAll("item"));
+          
+          if (DEBUG) console.log("✅ Éxito! Items encontrados:", items.length);
+          
+          if (!items.length) {
+            throw new Error("No se encontraron episodios");
+          }
 
-        // Mapear episodios
-        allEpisodes = items.map((item, index) => {
+          // Si llegamos aquí, el proxy funcionó
+          await processEpisodes(items);
+          return; // Salir, ya tenemos los datos
+          
+        } catch (error) {
+          if (DEBUG) console.warn(`⚠️ Intento ${i + 1} falló:`, error.message);
+          
+          // Si es el último intento, mostrar error
+          if (i === PROXIES.length - 1) {
+            console.error("❌ Todos los proxies fallaron");
+            episodesContainer.innerHTML = `
+              <div class="error" style="text-align: center; padding: 2rem; color: #e74c3c;">
+                <p style="font-size: 1.2rem; margin-bottom: 1rem;">⚠️ No se pudo cargar el feed RSS</p>
+                <p style="font-size: 0.9rem; opacity: 0.8;">
+                  Se intentaron ${PROXIES.length} métodos diferentes sin éxito.<br>
+                  Por favor, verifica tu conexión a internet o intenta más tarde.
+                </p>
+                <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer;">
+                  🔄 Reintentar
+                </button>
+              </div>
+            `;
+            btnNext.disabled = true;
+            btnPrev.disabled = true;
+          }
+        }
+      }
+    }
+
+    // ===== PROCESAR EPISODIOS =====
+    async function processEpisodes(items) {
+
+      // Mapear episodios
+      allEpisodes = items.map((item, index) => {
           // Título
           const title = item.querySelector("title")?.textContent?.trim() || "Episodio sin título";
           
@@ -233,24 +286,13 @@
           };
         });
 
-        console.log(`✅ ${allEpisodes.length} episodios cargados correctamente`);
+        console.log(`✅ ${allEpisodes.length} episodios procesados correctamente`);
         
         visibleCount = Math.min(EPISODES_PER_PAGE, allEpisodes.length);
         renderEpisodes();
-        
       } catch (error) {
-        console.error("❌ Error cargando RSS:", error);
-        episodesContainer.innerHTML = `
-          <div class="error" style="text-align: center; padding: 2rem; color: #e74c3c;">
-            <p style="font-size: 1.2rem; margin-bottom: 1rem;">⚠️ No se pudo cargar el feed RSS</p>
-            <p style="font-size: 0.9rem; opacity: 0.8;">
-              Error: ${error.message}<br>
-              Por favor, intenta de nuevo más tarde o contacta al administrador.
-            </p>
-          </div>
-        `;
-        btnNext.disabled = true;
-        btnPrev.disabled = true;
+        console.error("❌ Error procesando episodios:", error);
+        throw error;
       }
     }
 
