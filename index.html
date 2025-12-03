@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mantones y Misterios - Podcast</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <div class="logo-icon">
+            <img src="img/Logo.png" alt="Logo EMYS"> 
+        </div>
+        <span>Mantones y Misterios</span>
+      </div>
+
+      <nav class="nav-links">
+        <a href="#inicio">Inicio</a>
+        <a href="#player">Escuchar</a>
+        <a href="#podcast">Podcast</a>
+        <a href="#blog">Crónicas</a>
+        <a href="#archivo">Archivo</a>
+      </nav>
+
+      <a href="#yapa" class="btn btn-donate">🍽️ Invítanos un ceviche</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-tagline">🎧 Narrado por Sintia Alvarado</span>
+      <h1 class="hero-title">
+       Entre <br />
+        <span>Mantones y Misterios</span>
+      </h1>
+
+      <p class="hero-meta">
+        Nuevo episodio cada mes
+      </p>
+
+      <div class="hero-actions">
+        <a href="#player" class="btn btn-play">
+          <span class="play-icon">▶</span>
+        </a>
+        <span class="hero-actions-text">🎧 Comienza el relato</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- SECCIÓN SPOTIFY -->
+   <section class="spotify-section" id="player">
+    <div class="container spotify-container">
+      <div class="spotify-text">
+        <h2>Historias que susurran desde el Perú</h2>
+        <p>
+          Desde el corazón de Perú, narramos historias que el tiempo no pudo borrar: leyendas, sucesos y memorias que aún buscan ser escuchadas 
+        </p>  
+      </div>
+
+      <div class="spotify-player">
+        <!-- Embed de Spotify -->
+        <iframe style="border-radius:12px"
+                src="https://open.spotify.com/embed/show/2fpykNR5dya5c4V8WTPldw?utm_source=generator&theme=0"
+                width="100%" height="232" frameborder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- LISTADO DE EPISODIOS (RSS) -->
+  <main class="main-content" id="podcast">
+    <section class="episodes-section">
+      <div class="container">
+        <header class="episodes-header">
+          <h2>Crónicas del Perú oculto</h2>
+          <p>
+            Aquí se reúnen todos los relatos publicados hasta ahora. Historias nacidas en Lima y en los rincones más olvidados de Perú.
+          </p>
+        </header>
+
+        <div id="episodesContainer" class="episodes-container">
+          <p class="loading">Cargando episodios...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PAGINACIÓN -->
+  <section class="pagination-section">
+    <div class="container pagination-container">
+      <button class="pagination-btn pagination-prev" id="btnPrev">
+        ‹ Newer Entries
+      </button>
+      <button class="pagination-btn pagination-next" id="btnNext">
+        Older Entries ›
+      </button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <p>Mantones y Misterios · Podcast desde Perú</p>
+      <div class="footer-links">
+        <a href="#">Privacy policy</a>
+        <span>·</span>
+        <a href="#">Terms &amp; conditions</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS: RSS + PAGINACIÓN + BOTÓN PLAY -->
+  <script>
+    // RSS de Simplecast
+    const REAL_RSS = "https://feeds.simplecast.com/tOjNXec5";
+
+    // Proxy AllOrigins para evitar problemas de CORS
+    const RSS_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(REAL_RSS);
+
+    const EPISODES_PER_PAGE = 4;
+    const episodesContainer = document.getElementById("episodesContainer");
+    const btnNext = document.getElementById("btnNext");
+    const btnPrev = document.getElementById("btnPrev");
+
+    let allEpisodes = [];
+    let visibleCount = EPISODES_PER_PAGE;
+
+    async function loadEpisodesFromRSS() {
+      try {
+        const response = await fetch(RSS_URL);
+        const text = await response.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(text, "application/xml");
+
+        const items = Array.from(xml.querySelectorAll("item"));
+        if (!items.length) {
+          episodesContainer.innerHTML = "<p>No se han encontrado episodios.</p>";
+          return;
+        }
+
+        allEpisodes = items.map((item, index) => {
+          const title = item.querySelector("title")?.textContent?.trim() || "Episodio sin título";
+          const rawDescription = item.querySelector("description")?.textContent || "";
+
+          // Limpiar HTML de la descripción del RSS
+          const tmp = document.createElement("div");
+          tmp.innerHTML = rawDescription;
+          const cleanDesc = (tmp.textContent || tmp.innerText || "").trim();
+
+          const pubDate = item.querySelector("pubDate")?.textContent || "";
+          const enclosure = item.querySelector("enclosure");
+          const audioUrl = enclosure ? enclosure.getAttribute("url") : null;
+
+          const itunesImage = item.querySelector("itunes\\:image, image");
+          const imageUrl = itunesImage?.getAttribute("href") ||
+                           "https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=1600";
+
+          return { title, description: cleanDesc, pubDate, audioUrl, imageUrl, index };
+        });
+
+        visibleCount = Math.min(EPISODES_PER_PAGE, allEpisodes.length);
+        renderEpisodes();
+      } catch (error) {
+        console.error("Error cargando RSS:", error);
+        episodesContainer.innerHTML = `
+          <p class="error">
+            No se ha podido cargar el feed RSS.<br>
+            (Puede ser un problema temporal de red o del proxy)
+          </p>`;
+      }
+    }
+
+    function renderEpisodes() {
+      episodesContainer.innerHTML = "";
+
+      const visibleEpisodes = allEpisodes.slice(0, visibleCount);
+
+      visibleEpisodes.forEach((ep) => {
+        const dateText = ep.pubDate
+          ? new Date(ep.pubDate).toLocaleDateString("es-ES", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })
+          : "";
+
+        const shortDesc =
+          ep.description.length > 260
+            ? ep.description.slice(0, 260) + "…"
+            : ep.description;
+
+        const article = document.createElement("article");
+        article.className = "episode-card";
+
+        article.innerHTML = `
+          <div class="episode-image">
+            <img src="${ep.imageUrl}" alt="${ep.title}">
+            <button class="play-button-card" ${ep.audioUrl ? "" : "disabled"}>
+              ▶
+            </button>
+          </div>
+          <div class="episode-info">
+            <span class="episode-category">Podcast</span>
+            <h2 class="episode-title">${ep.title}</h2>
+            <p class="episode-meta">
+              Episode ${allEpisodes.length - ep.index}
+              ${dateText ? " • " + dateText : ""}
+            </p>
+            <p class="episode-description">${shortDesc}</p>
+          </div>
+        `;
+
+        const playButton = article.querySelector(".play-button-card");
+        if (ep.audioUrl && playButton) {
+          playButton.addEventListener("click", () => {
+            window.open(ep.audioUrl, "_blank");
+          });
+        }
+
+        episodesContainer.appendChild(article);
+      });
+
+      updatePaginationButtons();
+    }
+
+    function updatePaginationButtons() {
+      btnPrev.disabled = visibleCount <= EPISODES_PER_PAGE;
+      btnNext.disabled = visibleCount >= allEpisodes.length;
+    }
+
+    btnNext.addEventListener("click", () => {
+      if (visibleCount < allEpisodes.length) {
+        visibleCount = Math.min(
+          visibleCount + EPISODES_PER_PAGE,
+          allEpisodes.length
+        );
+        renderEpisodes();
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    });
+
+    btnPrev.addEventListener("click", () => {
+      if (visibleCount > EPISODES_PER_PAGE) {
+        visibleCount = Math.max(
+          visibleCount - EPISODES_PER_PAGE,
+          EPISODES_PER_PAGE
+        );
+        renderEpisodes();
+        window.scrollTo({
+          top: document.querySelector(".episodes-section").offsetTop - 80,
+          behavior: "smooth",
+        });
+      }
+    });
+
+    loadEpisodesFromRSS();
+  </script>
+</body>
+</html>
