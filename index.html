@@ -34,7 +34,7 @@
   </header>
 
   <!-- HERO -->
-  <section class="hero" id="home">
+  <section class="hero" id="inicio">
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <span class="hero-tagline">🎧 Narrado por Sintia Alvarado</span>
@@ -71,9 +71,10 @@
         <!-- Embed de Spotify -->
         <iframe style="border-radius:12px"
                 src="https://open.spotify.com/embed/show/2fpykNR5dya5c4V8WTPldw?utm_source=generator&theme=0"
-                width="100%" height="232" frameborder="0"
+                width="100%" height="232" frameBorder="0"
                 allowfullscreen=""
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
         </iframe>
       </div>
     </div>
@@ -100,11 +101,11 @@
   <!-- PAGINACIÓN -->
   <section class="pagination-section">
     <div class="container pagination-container">
-      <button class="pagination-btn pagination-prev" id="btnPrev">
-        ‹ Newer Entries
+      <button class="pagination-btn pagination-prev" id="btnPrev" disabled>
+        ‹ Episodios recientes
       </button>
       <button class="pagination-btn pagination-next" id="btnNext">
-        Older Entries ›
+        Episodios antiguos ›
       </button>
     </div>
   </section>
@@ -123,91 +124,167 @@
 
   <!-- JS: RSS + PAGINACIÓN + BOTÓN PLAY -->
   <script>
-    // RSS de Simplecast
-    const REAL_RSS = "https://feeds.simplecast.com/tOjNXec5";
+    // ===== CONFIGURACIÓN =====
+    // RSS de Radio Ambulante (feed de prueba en español)
+    const REAL_RSS = "https://feeds.feedburner.com/radioambulante";
 
     // Proxy AllOrigins para evitar problemas de CORS
     const RSS_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(REAL_RSS);
 
     const EPISODES_PER_PAGE = 4;
+    
+    // ===== ELEMENTOS DEL DOM =====
     const episodesContainer = document.getElementById("episodesContainer");
     const btnNext = document.getElementById("btnNext");
     const btnPrev = document.getElementById("btnPrev");
 
+    // ===== ESTADO DE LA APP =====
     let allEpisodes = [];
     let visibleCount = EPISODES_PER_PAGE;
 
+    // ===== FUNCIÓN PRINCIPAL: CARGAR RSS =====
     async function loadEpisodesFromRSS() {
       try {
+        episodesContainer.innerHTML = '<p class="loading">Cargando episodios...</p>';
+        
         const response = await fetch(RSS_URL);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const text = await response.text();
         const parser = new DOMParser();
         const xml = parser.parseFromString(text, "application/xml");
 
+        // Verificar si hay errores en el parsing
+        const parseError = xml.querySelector("parsererror");
+        if (parseError) {
+          throw new Error("Error al parsear el XML del feed");
+        }
+
         const items = Array.from(xml.querySelectorAll("item"));
+        
         if (!items.length) {
-          episodesContainer.innerHTML = "<p>No se han encontrado episodios.</p>";
+          episodesContainer.innerHTML = "<p>No se han encontrado episodios en el feed.</p>";
           return;
         }
 
+        // Mapear episodios
         allEpisodes = items.map((item, index) => {
+          // Título
           const title = item.querySelector("title")?.textContent?.trim() || "Episodio sin título";
+          
+          // Descripción (limpiar HTML)
           const rawDescription = item.querySelector("description")?.textContent || "";
-
-          // Limpiar HTML de la descripción del RSS
           const tmp = document.createElement("div");
           tmp.innerHTML = rawDescription;
           const cleanDesc = (tmp.textContent || tmp.innerText || "").trim();
 
+          // Fecha de publicación
           const pubDate = item.querySelector("pubDate")?.textContent || "";
+          
+          // URL del audio
           const enclosure = item.querySelector("enclosure");
           const audioUrl = enclosure ? enclosure.getAttribute("url") : null;
 
+          // Imagen del episodio (intenta varios selectores)
+          let imageUrl = null;
+          
+          // Intenta itunes:image
           const itunesImage = item.querySelector("itunes\\:image, image");
-          const imageUrl = itunesImage?.getAttribute("href") ||
-                           "https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=1600";
+          if (itunesImage) {
+            imageUrl = itunesImage.getAttribute("href") || itunesImage.getAttribute("url");
+          }
+          
+          // Si no hay imagen, intenta media:content
+          if (!imageUrl) {
+            const mediaContent = item.querySelector("media\\:content, content");
+            if (mediaContent) {
+              imageUrl = mediaContent.getAttribute("url");
+            }
+          }
+          
+          // Si no hay imagen, intenta dentro de content:encoded
+          if (!imageUrl) {
+            const contentEncoded = item.querySelector("content\\:encoded");
+            if (contentEncoded) {
+              const imgMatch = contentEncoded.textContent.match(/<img[^>]+src="([^">]+)"/);
+              if (imgMatch) imageUrl = imgMatch[1];
+            }
+          }
+          
+          // Imagen por defecto si no se encuentra ninguna
+          if (!imageUrl) {
+            imageUrl = "https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=1600";
+          }
 
-          return { title, description: cleanDesc, pubDate, audioUrl, imageUrl, index };
+          // Duración (si está disponible)
+          const duration = item.querySelector("itunes\\:duration")?.textContent || "";
+
+          return { 
+            title, 
+            description: cleanDesc, 
+            pubDate, 
+            audioUrl, 
+            imageUrl, 
+            duration,
+            index 
+          };
         });
 
+        console.log(`✅ ${allEpisodes.length} episodios cargados correctamente`);
+        
         visibleCount = Math.min(EPISODES_PER_PAGE, allEpisodes.length);
         renderEpisodes();
+        
       } catch (error) {
-        console.error("Error cargando RSS:", error);
+        console.error("❌ Error cargando RSS:", error);
         episodesContainer.innerHTML = `
-          <p class="error">
-            No se ha podido cargar el feed RSS.<br>
-            (Puede ser un problema temporal de red o del proxy)
-          </p>`;
+          <div class="error" style="text-align: center; padding: 2rem; color: #e74c3c;">
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">⚠️ No se pudo cargar el feed RSS</p>
+            <p style="font-size: 0.9rem; opacity: 0.8;">
+              Error: ${error.message}<br>
+              Por favor, intenta de nuevo más tarde o contacta al administrador.
+            </p>
+          </div>
+        `;
+        btnNext.disabled = true;
+        btnPrev.disabled = true;
       }
     }
 
+    // ===== RENDERIZAR EPISODIOS =====
     function renderEpisodes() {
       episodesContainer.innerHTML = "";
 
       const visibleEpisodes = allEpisodes.slice(0, visibleCount);
 
       visibleEpisodes.forEach((ep) => {
+        // Formatear fecha
         const dateText = ep.pubDate
           ? new Date(ep.pubDate).toLocaleDateString("es-ES", {
               year: "numeric",
-              month: "short",
+              month: "long",
               day: "numeric",
             })
           : "";
 
+        // Acortar descripción
         const shortDesc =
           ep.description.length > 260
             ? ep.description.slice(0, 260) + "…"
             : ep.description;
 
+        // Crear card del episodio
         const article = document.createElement("article");
         article.className = "episode-card";
 
         article.innerHTML = `
           <div class="episode-image">
-            <img src="${ep.imageUrl}" alt="${ep.title}">
-            <button class="play-button-card" ${ep.audioUrl ? "" : "disabled"}>
+            <img src="${ep.imageUrl}" alt="${ep.title}" loading="lazy">
+            <button class="play-button-card" ${ep.audioUrl ? "" : "disabled"} 
+                    title="${ep.audioUrl ? 'Reproducir episodio' : 'Audio no disponible'}">
               ▶
             </button>
           </div>
@@ -215,16 +292,19 @@
             <span class="episode-category">Podcast</span>
             <h2 class="episode-title">${ep.title}</h2>
             <p class="episode-meta">
-              Episode ${allEpisodes.length - ep.index}
+              Episodio ${allEpisodes.length - ep.index}
               ${dateText ? " • " + dateText : ""}
+              ${ep.duration ? " • " + ep.duration : ""}
             </p>
             <p class="episode-description">${shortDesc}</p>
           </div>
         `;
 
+        // Event listener para el botón de play
         const playButton = article.querySelector(".play-button-card");
         if (ep.audioUrl && playButton) {
-          playButton.addEventListener("click", () => {
+          playButton.addEventListener("click", (e) => {
+            e.preventDefault();
             window.open(ep.audioUrl, "_blank");
           });
         }
@@ -235,11 +315,13 @@
       updatePaginationButtons();
     }
 
+    // ===== ACTUALIZAR BOTONES DE PAGINACIÓN =====
     function updatePaginationButtons() {
       btnPrev.disabled = visibleCount <= EPISODES_PER_PAGE;
       btnNext.disabled = visibleCount >= allEpisodes.length;
     }
 
+    // ===== EVENT LISTENERS: PAGINACIÓN =====
     btnNext.addEventListener("click", () => {
       if (visibleCount < allEpisodes.length) {
         visibleCount = Math.min(
@@ -247,8 +329,10 @@
           allEpisodes.length
         );
         renderEpisodes();
+        
+        // Scroll suave al final de los episodios
         window.scrollTo({
-          top: document.body.scrollHeight,
+          top: episodesContainer.offsetTop - 100,
           behavior: "smooth",
         });
       }
@@ -261,6 +345,8 @@
           EPISODES_PER_PAGE
         );
         renderEpisodes();
+        
+        // Scroll suave a la sección de episodios
         window.scrollTo({
           top: document.querySelector(".episodes-section").offsetTop - 80,
           behavior: "smooth",
@@ -268,6 +354,7 @@
       }
     });
 
+    // ===== INICIALIZAR AL CARGAR LA PÁGINA =====
     loadEpisodesFromRSS();
   </script>
 </body>
