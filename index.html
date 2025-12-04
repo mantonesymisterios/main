@@ -26,10 +26,10 @@
         <a href="#player">Escuchar</a>
         <a href="#podcast">Podcast</a>
         <a href="#blog">Crónicas</a>
-        <a href="#archivo">Archivo</a>
+        
       </nav>
 
-      <a href="#yapa" class="btn btn-donate">🍽️ Invítanos un ceviche</a>
+      <a href="#yapa" class="btn btn-donate">🍽️ Invítanos a un ceviche</a>
     </div>
   </header>
 
@@ -54,7 +54,6 @@
         <span class="hero-actions-text">🎧 Comienza el relato</span>
       </div>
     </div>
-
   </section>
 
   <!-- SECCIÓN SPOTIFY -->
@@ -67,15 +66,13 @@
         </p>  
       </div>
 
-      <div class="spotify-player">
-        <!-- Embed de Spotify -->
-        <iframe style="border-radius:12px"
-                src="https://open.spotify.com/embed/show/2fpykNR5dya5c4V8WTPldw?utm_source=generator&theme=0"
-                width="100%" height="232" frameBorder="0"
-                allowfullscreen=""
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy">
-        </iframe>
+      <div class="spotify-player" id="audioPlayerContainer">
+        <!-- Player dinámico - Se carga con el último episodio -->
+        <div style="background: #2c3e50; border-radius: 12px; padding: 2rem; 
+                    min-height: 232px; display: flex; flex-direction: column; 
+                    justify-content: center; color: white;">
+          <p style="text-align: center; opacity: 0.8;">Cargando reproductor...</p>
+        </div>
       </div>
     </div>
   </section>
@@ -122,23 +119,20 @@
     </div>
   </footer>
 
-  <!-- JS: RSS + PAGINACIÓN + BOTÓN PLAY -->
+  <!-- JS: RSS2JSON + PAGINACIÓN -->
   <script>
     // ===== CONFIGURACIÓN =====
-    // RSS de Radio Ambulante (feed de prueba en español)
-    const REAL_RSS = "https://feeds.feedburner.com/radioambulante";
-
-    // Lista de proxies CORS (se prueban en orden hasta que uno funcione)
-    const PROXIES = [
-      url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-      url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-      url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-      url => url // Último intento: sin proxy
-    ];
-
-    const EPISODES_PER_PAGE = 4;
     
-    // ===== DEBUG MODE =====
+    // Tu feed RSS (Radio Ambulante para pruebas, reemplaza con el tuyo)
+    const PODCAST_RSS = "https://feeds.feedburner.com/radioambulante";
+    
+    // Cuando tengas tu podcast en Spotify, cámbialo por:
+    // const PODCAST_RSS = "https://anchor.fm/s/TU_ID/podcast/rss";
+    
+    // API RSS2JSON (sin necesidad de proxies adicionales!)
+    const RSS_API = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(PODCAST_RSS)}`;
+    
+    const EPISODES_PER_PAGE = 4;
     const DEBUG = true; // Cambia a false en producción
     
     // ===== ELEMENTOS DEL DOM =====
@@ -150,150 +144,131 @@
     let allEpisodes = [];
     let visibleCount = EPISODES_PER_PAGE;
 
-    // ===== FUNCIÓN PRINCIPAL: CARGAR RSS =====
+    // ===== FUNCIÓN PRINCIPAL: CARGAR FEED =====
     async function loadEpisodesFromRSS() {
-      episodesContainer.innerHTML = '<p class="loading">Cargando episodios...</p>';
-      
-      // Intentar con cada proxy hasta que uno funcione
-      for (let i = 0; i < PROXIES.length; i++) {
-        try {
-          const proxyUrl = PROXIES[i](REAL_RSS);
-          
-          if (DEBUG) console.log(`🔄 Intento ${i + 1}/${PROXIES.length}:`, proxyUrl);
-          
-          const response = await fetch(proxyUrl);
-          
-          if (DEBUG) console.log(`📡 Respuesta:`, response.status, response.statusText);
-          
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
-          
-          const text = await response.text();
-          
-          if (DEBUG) console.log("📄 Texto recibido:", text.length, "caracteres");
-          
-          const parser = new DOMParser();
-          const xml = parser.parseFromString(text, "application/xml");
-
-          // Verificar si hay errores en el parsing
-          const parseError = xml.querySelector("parsererror");
-          if (parseError) {
-            if (DEBUG) console.error("❌ Error de parsing");
-            throw new Error("Error al parsear XML");
-          }
-
-          const items = Array.from(xml.querySelectorAll("item"));
-          
-          if (DEBUG) console.log("✅ Éxito! Items encontrados:", items.length);
-          
-          if (!items.length) {
-            throw new Error("No se encontraron episodios");
-          }
-
-          // Si llegamos aquí, el proxy funcionó
-          await processEpisodes(items);
-          return; // Salir, ya tenemos los datos
-          
-        } catch (error) {
-          if (DEBUG) console.warn(`⚠️ Intento ${i + 1} falló:`, error.message);
-          
-          // Si es el último intento, mostrar error
-          if (i === PROXIES.length - 1) {
-            console.error("❌ Todos los proxies fallaron");
-            episodesContainer.innerHTML = `
-              <div class="error" style="text-align: center; padding: 2rem; color: #e74c3c;">
-                <p style="font-size: 1.2rem; margin-bottom: 1rem;">⚠️ No se pudo cargar el feed RSS</p>
-                <p style="font-size: 0.9rem; opacity: 0.8;">
-                  Se intentaron ${PROXIES.length} métodos diferentes sin éxito.<br>
-                  Por favor, verifica tu conexión a internet o intenta más tarde.
-                </p>
-                <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer;">
-                  🔄 Reintentar
-                </button>
-              </div>
-            `;
-            btnNext.disabled = true;
-            btnPrev.disabled = true;
-          }
+      try {
+        episodesContainer.innerHTML = '<p class="loading">Cargando episodios...</p>';
+        
+        if (DEBUG) console.log("🔄 Cargando feed desde RSS2JSON...");
+        
+        const response = await fetch(RSS_API);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-      }
-    }
+        
+        const data = await response.json();
+        
+        if (DEBUG) {
+          console.log("📡 Respuesta recibida:", data);
+          console.log("📦 Episodios encontrados:", data.items?.length || 0);
+        }
+        
+        // Verificar si la API respondió correctamente
+        if (data.status !== "ok") {
+          throw new Error(data.message || "Error en la respuesta de RSS2JSON");
+        }
+        
+        if (!data.items || data.items.length === 0) {
+          episodesContainer.innerHTML = "<p>No se encontraron episodios en el feed.</p>";
+          return;
+        }
 
-    // ===== PROCESAR EPISODIOS =====
-    async function processEpisodes(items) {
-
-      // Mapear episodios
-      allEpisodes = items.map((item, index) => {
-          // Título
-          const title = item.querySelector("title")?.textContent?.trim() || "Episodio sin título";
+        // Procesar episodios (RSS2JSON ya hace el trabajo pesado!)
+        allEpisodes = data.items.map((item, index) => {
+          // RSS2JSON ya limpia el HTML de las descripciones
+          const description = item.description || "";
           
-          // Descripción (limpiar HTML)
-          const rawDescription = item.querySelector("description")?.textContent || "";
-          const tmp = document.createElement("div");
-          tmp.innerHTML = rawDescription;
-          const cleanDesc = (tmp.textContent || tmp.innerText || "").trim();
-
-          // Fecha de publicación
-          const pubDate = item.querySelector("pubDate")?.textContent || "";
+          // Extraer URL del audio (puede estar en enclosure o content)
+          const audioUrl = item.enclosure?.link || item.link || null;
           
-          // URL del audio
-          const enclosure = item.querySelector("enclosure");
-          const audioUrl = enclosure ? enclosure.getAttribute("url") : null;
-
-          // Imagen del episodio (intenta varios selectores)
-          let imageUrl = null;
+          // RSS2JSON extrae automáticamente las imágenes
+          const imageUrl = item.thumbnail || 
+                          item.enclosure?.thumbnail ||
+                          "https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=1600";
           
-          // Intenta itunes:image
-          const itunesImage = item.querySelector("itunes\\:image, image");
-          if (itunesImage) {
-            imageUrl = itunesImage.getAttribute("href") || itunesImage.getAttribute("url");
-          }
-          
-          // Si no hay imagen, intenta media:content
-          if (!imageUrl) {
-            const mediaContent = item.querySelector("media\\:content, content");
-            if (mediaContent) {
-              imageUrl = mediaContent.getAttribute("url");
-            }
-          }
-          
-          // Si no hay imagen, intenta dentro de content:encoded
-          if (!imageUrl) {
-            const contentEncoded = item.querySelector("content\\:encoded");
-            if (contentEncoded) {
-              const imgMatch = contentEncoded.textContent.match(/<img[^>]+src="([^">]+)"/);
-              if (imgMatch) imageUrl = imgMatch[1];
-            }
-          }
-          
-          // Imagen por defecto si no se encuentra ninguna
-          if (!imageUrl) {
-            imageUrl = "https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=1600";
-          }
-
-          // Duración (si está disponible)
-          const duration = item.querySelector("itunes\\:duration")?.textContent || "";
-
-          return { 
-            title, 
-            description: cleanDesc, 
-            pubDate, 
-            audioUrl, 
-            imageUrl, 
-            duration,
-            index 
+          return {
+            title: item.title || "Episodio sin título",
+            description: description,
+            pubDate: item.pubDate || "",
+            audioUrl: audioUrl,
+            imageUrl: imageUrl,
+            author: item.author || "",
+            categories: item.categories || [],
+            index: index
           };
         });
 
-        console.log(`✅ ${allEpisodes.length} episodios procesados correctamente`);
+        console.log(`✅ ${allEpisodes.length} episodios cargados correctamente`);
         
         visibleCount = Math.min(EPISODES_PER_PAGE, allEpisodes.length);
         renderEpisodes();
+        
+        // Cargar el reproductor con el episodio más reciente
+        if (allEpisodes.length > 0) {
+          createAudioPlayer(allEpisodes[0]);
+        }
+        
       } catch (error) {
-        console.error("❌ Error procesando episodios:", error);
-        throw error;
+        console.error("❌ Error cargando feed:", error);
+        episodesContainer.innerHTML = `
+          <div class="error" style="text-align: center; padding: 2rem; color: #e74c3c;">
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">⚠️ No se pudo cargar el feed</p>
+            <p style="font-size: 0.9rem; opacity: 0.8;">
+              ${error.message}<br><br>
+              Verifica que el feed RSS sea válido y esté accesible.
+            </p>
+            <button onclick="location.reload()" 
+                    style="margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer; 
+                           background: #3498db; color: white; border: none; 
+                           border-radius: 4px; font-size: 0.9rem;">
+              🔄 Reintentar
+            </button>
+          </div>
+        `;
+        btnNext.disabled = true;
+        btnPrev.disabled = true;
       }
+    }
+
+    // ===== CREAR REPRODUCTOR DE AUDIO =====
+    function createAudioPlayer(episode) {
+      const playerContainer = document.getElementById('audioPlayerContainer');
+      
+      if (!episode.audioUrl) {
+        playerContainer.innerHTML = `
+          <div style="background: #34495e; border-radius: 12px; padding: 2rem; 
+                      text-align: center; color: white;">
+            <p style="opacity: 0.8;">Reproductor no disponible</p>
+          </div>
+        `;
+        return;
+      }
+
+      playerContainer.innerHTML = `
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    border-radius: 12px; padding: 2rem; color: white;">
+          <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
+            <img src="${episode.imageUrl}" 
+                 alt="${episode.title}" 
+                 style="width: 120px; height: 120px; border-radius: 8px; 
+                        object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <div style="flex: 1; min-width: 200px;">
+              <p style="margin: 0 0 0.5rem 0; opacity: 0.9; font-size: 0.85rem; 
+                        text-transform: uppercase; letter-spacing: 1px;">
+                Último episodio
+              </p>
+              <h3 style="margin: 0 0 1rem 0; font-size: 1.3rem; line-height: 1.3;">
+                ${episode.title}
+              </h3>
+              <audio controls style="width: 100%; margin-top: 1rem;">
+                <source src="${episode.audioUrl}" type="audio/mpeg">
+                Tu navegador no soporta el elemento de audio.
+              </audio>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     // ===== RENDERIZAR EPISODIOS =====
@@ -325,7 +300,8 @@
         article.innerHTML = `
           <div class="episode-image">
             <img src="${ep.imageUrl}" alt="${ep.title}" loading="lazy">
-            <button class="play-button-card" ${ep.audioUrl ? "" : "disabled"} 
+            <button class="play-button-card" 
+                    ${ep.audioUrl ? "" : "disabled"} 
                     title="${ep.audioUrl ? 'Reproducir episodio' : 'Audio no disponible'}">
               ▶
             </button>
@@ -336,7 +312,6 @@
             <p class="episode-meta">
               Episodio ${allEpisodes.length - ep.index}
               ${dateText ? " • " + dateText : ""}
-              ${ep.duration ? " • " + ep.duration : ""}
             </p>
             <p class="episode-description">${shortDesc}</p>
           </div>
@@ -372,7 +347,6 @@
         );
         renderEpisodes();
         
-        // Scroll suave al final de los episodios
         window.scrollTo({
           top: episodesContainer.offsetTop - 100,
           behavior: "smooth",
@@ -388,7 +362,6 @@
         );
         renderEpisodes();
         
-        // Scroll suave a la sección de episodios
         window.scrollTo({
           top: document.querySelector(".episodes-section").offsetTop - 80,
           behavior: "smooth",
