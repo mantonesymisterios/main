@@ -14,24 +14,28 @@
   <!-- NAVBAR -->
   <header class="navbar">
     <div class="nav-container">
-      <div class="logo">
+      <a href="#inicio" class="logo">
         <div class="logo-icon">
-            <img src="img/Logo.png" alt="Logo EMYS"> 
+          <img src="img/Logo.png" alt="Logo EMYS">
         </div>
         <span>Mantones y Misterios</span>
-      </div>
+      </a>
 
       <nav class="nav-links">
         <a href="#inicio">Inicio</a>
         <a href="#player">Escuchar</a>
         <a href="#podcast">Podcast</a>
         <a href="#blog">Crónicas</a>
-        
+        <a href="#archivo">Archivo</a>
       </nav>
 
-      <a href="#yapa" class="btn btn-donate">🍽️ Invítanos a un ceviche</a>
+      <a href="#yapa" class="btn btn-donate">🍽️ Invítanos un ceviche</a>
     </div>
   </header>
+
+  <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Abrir menú de navegación">
+    ☰
+  </button>
 
   <!-- HERO -->
   <section class="hero" id="inicio">
@@ -39,7 +43,7 @@
     <div class="hero-content">
       <span class="hero-tagline">🎧 Narrado por Sintia Alvarado</span>
       <h1 class="hero-title">
-       Entre <br />
+        Entre <br />
         <span>Mantones y Misterios</span>
       </h1>
 
@@ -57,21 +61,47 @@
   </section>
 
   <!-- SECCIÓN SPOTIFY -->
-   <section class="spotify-section" id="player">
+  <section class="spotify-section" id="player">
     <div class="container spotify-container">
       <div class="spotify-text">
         <h2>Historias que susurran desde el Perú</h2>
         <p>
-          Desde el corazón de Perú, narramos historias que el tiempo no pudo borrar: leyendas, sucesos y memorias que aún buscan ser escuchadas 
-        </p>  
+          Desde el corazón de Perú, narramos historias que el tiempo no pudo borrar: leyendas, sucesos y memorias que aún buscan ser escuchadas
+        </p>
       </div>
 
       <div class="spotify-player" id="audioPlayerContainer">
-        <!-- Player dinámico - Se carga con el último episodio -->
-        <div style="background: #2c3e50; border-radius: 12px; padding: 2rem; 
-                    min-height: 232px; display: flex; flex-direction: column; 
-                    justify-content: center; color: white;">
-          <p style="text-align: center; opacity: 0.8;">Cargando reproductor...</p>
+        <div style="background: linear-gradient(135deg, #fbf1e6 0%, #f5e6d3 100%);
+                    border-radius: 12px; padding: 2rem; color: #6b5b95;">
+          <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
+            <img
+              id="currentEpisodeImage"
+              src="https://www.omnycontent.com/d/clips/e73c998e-6e60-432f-8610-ae210140c5b1/b3c9b6e7-72ba-45c4-aff9-b1e7012d213b/412bce96-9714-4947-89ed-b3a6010caa93/image.jpg?t=1764606472&amp;size=Large"
+              alt="Señales de vida"
+              style="width: 120px; height: 120px; border-radius: 8px;
+                     object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);"
+            >
+            <div style="flex: 1; min-width: 200px;">
+              <p style="margin: 0 0 0.5rem 0; opacity: 0.8; font-size: 0.85rem;
+                        text-transform: uppercase; letter-spacing: 1px;">
+                Último episodio
+              </p>
+              <h3 id="currentEpisodeTitle" style="margin: 0 0 1rem 0; font-size: 1.3rem; line-height: 1.3;">
+                Señales de vida
+              </h3>
+              <audio
+                id="mainAudioPlayer"
+                controls
+                style="width: 100%; margin-top: 1rem;"
+              >
+                <source
+                  src="https://podtrac.com/pts/redirect.mp3/traffic.omny.fm/d/clips/e73c998e-6e60-432f-8610-ae210140c5b1/b3c9b6e7-72ba-45c4-aff9-b1e7012d213b/412bce96-9714-4947-89ed-b3a6010caa93/audio.mp3?utm_source=Podcast&amp;in_playlist=092b66a8-4329-4183-bb12-b1e7012d216f"
+                  type="audio/mpeg"
+                >
+                Tu navegador no soporta el elemento de audio.
+              </audio>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -98,11 +128,11 @@
   <!-- PAGINACIÓN -->
   <section class="pagination-section">
     <div class="container pagination-container">
-      <button class="pagination-btn pagination-prev" id="btnPrev" disabled>
-        ‹ Episodios recientes
+      <button class="pagination-btn pagination-prev" id="btnPrev">
+        ‹ Relatos recientes
       </button>
       <button class="pagination-btn pagination-next" id="btnNext">
-        Episodios antiguos ›
+        Relatos antiguos ›
       </button>
     </div>
   </section>
@@ -111,10 +141,61 @@
   <footer class="footer">
     <div class="container footer-content">
       <p>Mantones y Misterios · Podcast desde Perú</p>
+      <div class="podcast-platforms">
+        <!-- Spotify -->
+        <a href="#" class="platform-link" title="Escucha en Spotify">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.28 17.35a.89.89 0 0 1-1.23.3c-3.36-2.06-7.59-2.53-12.57-1.38a.89.89 0 0 1-.41-1.74c5.45-1.28 10.17-.74 13.9 1.61.42.26.55.82.31 1.21zm1.33-3.22a1.1 1.1 0 0 1-1.52.37c-3.85-2.37-9.71-3.06-14.25-1.65a1.1 1.1 0 0 1-.64-2.11c5.19-1.58 11.6-.8 15.96 1.9.51.32.67 1 .35 1.49zm.16-3.39C14.5 8.02 9.45 7.83 5.24 9.12a1.31 1.31 0 1 1-.75-2.51c4.79-1.44 10.57-1.21 15.43 1.85a1.31 1.31 0 0 1-1.35 2.27z" />
+          </svg>
+        </a>
+
+        <!-- Apple Podcasts -->
+        <a href="#" class="platform-link" title="Escucha en Apple Podcasts">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 3.25a2.25 2.25 0 1 1 0 4.5 2.25 2.25 0 0 1 0-4.5zM9.5 12c0-1.378 1.122-2.5 2.5-2.5s2.5 1.122 2.5 2.5c0 1.027-.617 1.909-1.5 2.285V18a1 1 0 1 1-2 0v-3.715A2.494 2.494 0 0 1 9.5 12zm-2 0c0-2.481 1.815-4.543 4.25-4.95a.75.75 0 0 1 .5 1.414C10.827 8.78 9.5 10.248 9.5 12a.75.75 0 0 1-1.5 0zm9.5 0a.75.75 0 0 1-1.5 0c0-1.752-1.327-3.22-3.25-3.536a.75.75 0 1 1 .5-1.414C15.685 7.457 17 9.519 17 12z" />
+          </svg>
+        </a>
+
+        <!-- YouTube / YouTube Music -->
+        <a href="#" class="platform-link" title="Escucha en YouTube / YouTube Music">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M23.5 6.2a2.85 2.85 0 0 0-2-2C19.8 3.75 12 3.75 12 3.75s-7.8 0-9.5.45a2.85 2.85 0 0 0-2 2C0 7.9 0 12 0 12s0 4.1.5 5.8a2.85 2.85 0 0 0 2 2C4.2 20.25 12 20.25 12 20.25s7.8 0 9.5-.45a2.85 2.85 0 0 0 2-2C24 16.1 24 12 24 12s0-4.1-.5-5.8zM9.75 15.5v-7l6 3.5-6 3.5z" />
+          </svg>
+        </a>
+
+        <!-- RSS -->
+        <a href="#" class="platform-link" title="Ver feed RSS (base técnica)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M5 4a2 2 0 0 0-2 2v2a1 1 0 0 0 1 1c7.18 0 13 5.82 13 13a1 1 0 0 0 1 1h2a2 2 0 0 0 2-2C22 11.402 12.598 2 1 2H0v2a2 2 0 0 0 2 2h1Z" transform="scale(.5) translate(4 4)" />
+            <circle cx="6" cy="18" r="2" />
+          </svg>
+        </a>
+
+        <!-- Castbox (genérico) -->
+        <a href="#" class="platform-link" title="Escucha en Castbox">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="4" y="4" width="16" height="16" rx="4" />
+            <path d="M10 9v6l4-3z" />
+          </svg>
+        </a>
+
+        <!-- Podtail (genérico) -->
+        <a href="#" class="platform-link" title="Escucha en Podtail">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="6" />
+            <path d="M12 8v4l2 2" />
+          </svg>
+        </a>
+      </div>
+
       <div class="footer-links">
         <a href="#">Privacy policy</a>
         <span>·</span>
         <a href="#">Terms &amp; conditions</a>
+      </div>
+
+      <div class="footer-copyright">
+        <span>Diseño: &copy; Alberto Peralta</span>
       </div>
     </div>
   </footer>
@@ -122,93 +203,81 @@
   <!-- JS: RSS2JSON + PAGINACIÓN -->
   <script>
     // ===== CONFIGURACIÓN =====
-    
-    // Tu feed RSS (Radio Ambulante para pruebas, reemplaza con el tuyo)
+
     const PODCAST_RSS = "https://feeds.feedburner.com/radioambulante";
-    
-    // Cuando tengas tu podcast en Spotify, cámbialo por:
     // const PODCAST_RSS = "https://anchor.fm/s/TU_ID/podcast/rss";
-    
-    // API RSS2JSON (sin necesidad de proxies adicionales!)
+
     const RSS_API = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(PODCAST_RSS)}`;
-    
     const EPISODES_PER_PAGE = 4;
-    const DEBUG = true; // Cambia a false en producción
-    
+    const DEBUG = true;
+
     // ===== ELEMENTOS DEL DOM =====
     const episodesContainer = document.getElementById("episodesContainer");
     const btnNext = document.getElementById("btnNext");
     const btnPrev = document.getElementById("btnPrev");
+    const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+    const navLinks = document.querySelector(".nav-links");
 
-    // ===== ESTADO DE LA APP =====
+    // ===== ESTADO =====
     let allEpisodes = [];
     let visibleCount = EPISODES_PER_PAGE;
 
-    // ===== FUNCIÓN PRINCIPAL: CARGAR FEED =====
+    // ===== CARGAR FEED =====
     async function loadEpisodesFromRSS() {
       try {
         episodesContainer.innerHTML = '<p class="loading">Cargando episodios...</p>';
-        
+
         if (DEBUG) console.log("🔄 Cargando feed desde RSS2JSON...");
-        
+
         const response = await fetch(RSS_API);
-        
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const data = await response.json();
-        
+
         if (DEBUG) {
           console.log("📡 Respuesta recibida:", data);
           console.log("📦 Episodios encontrados:", data.items?.length || 0);
         }
-        
-        // Verificar si la API respondió correctamente
+
         if (data.status !== "ok") {
           throw new Error(data.message || "Error en la respuesta de RSS2JSON");
         }
-        
+
         if (!data.items || data.items.length === 0) {
           episodesContainer.innerHTML = "<p>No se encontraron episodios en el feed.</p>";
           return;
         }
 
-        // Procesar episodios (RSS2JSON ya hace el trabajo pesado!)
         allEpisodes = data.items.map((item, index) => {
-          // RSS2JSON ya limpia el HTML de las descripciones
           const description = item.description || "";
-          
-          // Extraer URL del audio (puede estar en enclosure o content)
           const audioUrl = item.enclosure?.link || item.link || null;
-          
-          // RSS2JSON extrae automáticamente las imágenes
-          const imageUrl = item.thumbnail || 
-                          item.enclosure?.thumbnail ||
-                          "https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=1600";
-          
+          const imageUrl =
+            item.thumbnail ||
+            item.enclosure?.thumbnail ||
+            "https://images.pexels.com/photos/6898859/pexels-photo-6898859.jpeg?auto=compress&cs=tinysrgb&w=1600";
+
           return {
             title: item.title || "Episodio sin título",
-            description: description,
+            description,
             pubDate: item.pubDate || "",
-            audioUrl: audioUrl,
-            imageUrl: imageUrl,
+            audioUrl,
+            imageUrl,
             author: item.author || "",
             categories: item.categories || [],
-            index: index
+            index,
           };
         });
 
-        console.log(`✅ ${allEpisodes.length} episodios cargados correctamente`);
-        
+        // Actualizar el reproductor superior con el episodio más reciente
+        if (allEpisodes.length > 0) {
+          // Suponemos que el feed viene ordenado de más nuevo a más antiguo
+          playEpisodeInMainPlayer(allEpisodes[0]);
+        }
+
         visibleCount = Math.min(EPISODES_PER_PAGE, allEpisodes.length);
         renderEpisodes();
-        
-        // Cargar el reproductor con el episodio más reciente
-        if (allEpisodes.length > 0) {
-          createAudioPlayer(allEpisodes[0]);
-        }
-        
       } catch (error) {
         console.error("❌ Error cargando feed:", error);
         episodesContainer.innerHTML = `
@@ -218,9 +287,9 @@
               ${error.message}<br><br>
               Verifica que el feed RSS sea válido y esté accesible.
             </p>
-            <button onclick="location.reload()" 
-                    style="margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer; 
-                           background: #3498db; color: white; border: none; 
+            <button onclick="location.reload()"
+                    style="margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer;
+                           background: #3498db; color: white; border: none;
                            border-radius: 4px; font-size: 0.9rem;">
               🔄 Reintentar
             </button>
@@ -231,46 +300,6 @@
       }
     }
 
-    // ===== CREAR REPRODUCTOR DE AUDIO =====
-    function createAudioPlayer(episode) {
-      const playerContainer = document.getElementById('audioPlayerContainer');
-      
-      if (!episode.audioUrl) {
-        playerContainer.innerHTML = `
-          <div style="background: #34495e; border-radius: 12px; padding: 2rem; 
-                      text-align: center; color: white;">
-            <p style="opacity: 0.8;">Reproductor no disponible</p>
-          </div>
-        `;
-        return;
-      }
-
-      playerContainer.innerHTML = `
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                    border-radius: 12px; padding: 2rem; color: white;">
-          <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
-            <img src="${episode.imageUrl}" 
-                 alt="${episode.title}" 
-                 style="width: 120px; height: 120px; border-radius: 8px; 
-                        object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-            <div style="flex: 1; min-width: 200px;">
-              <p style="margin: 0 0 0.5rem 0; opacity: 0.9; font-size: 0.85rem; 
-                        text-transform: uppercase; letter-spacing: 1px;">
-                Último episodio
-              </p>
-              <h3 style="margin: 0 0 1rem 0; font-size: 1.3rem; line-height: 1.3;">
-                ${episode.title}
-              </h3>
-              <audio controls style="width: 100%; margin-top: 1rem;">
-                <source src="${episode.audioUrl}" type="audio/mpeg">
-                Tu navegador no soporta el elemento de audio.
-              </audio>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
     // ===== RENDERIZAR EPISODIOS =====
     function renderEpisodes() {
       episodesContainer.innerHTML = "";
@@ -278,7 +307,6 @@
       const visibleEpisodes = allEpisodes.slice(0, visibleCount);
 
       visibleEpisodes.forEach((ep) => {
-        // Formatear fecha
         const dateText = ep.pubDate
           ? new Date(ep.pubDate).toLocaleDateString("es-ES", {
               year: "numeric",
@@ -287,22 +315,20 @@
             })
           : "";
 
-        // Acortar descripción
         const shortDesc =
           ep.description.length > 260
             ? ep.description.slice(0, 260) + "…"
             : ep.description;
 
-        // Crear card del episodio
         const article = document.createElement("article");
         article.className = "episode-card";
 
         article.innerHTML = `
           <div class="episode-image">
             <img src="${ep.imageUrl}" alt="${ep.title}" loading="lazy">
-            <button class="play-button-card" 
-                    ${ep.audioUrl ? "" : "disabled"} 
-                    title="${ep.audioUrl ? 'Reproducir episodio' : 'Audio no disponible'}">
+            <button class="play-button-card"
+                    ${ep.audioUrl ? "" : "disabled"}
+                    title="${ep.audioUrl ? "Reproducir episodio" : "Audio no disponible"}">
               ▶
             </button>
           </div>
@@ -314,15 +340,26 @@
               ${dateText ? " • " + dateText : ""}
             </p>
             <p class="episode-description">${shortDesc}</p>
+            <div class="episode-inline-player"></div>
           </div>
         `;
 
-        // Event listener para el botón de play
         const playButton = article.querySelector(".play-button-card");
-        if (ep.audioUrl && playButton) {
+        const inlinePlayerContainer = article.querySelector(".episode-inline-player");
+
+        if (ep.audioUrl && playButton && inlinePlayerContainer) {
           playButton.addEventListener("click", (e) => {
             e.preventDefault();
-            window.open(ep.audioUrl, "_blank");
+
+            // Limpiar cualquier reproductor previo en esta tarjeta
+            inlinePlayerContainer.innerHTML = "";
+
+            const audio = document.createElement("audio");
+            audio.controls = true;
+            audio.src = ep.audioUrl;
+            audio.autoplay = true;
+
+            inlinePlayerContainer.appendChild(audio);
           });
         }
 
@@ -332,25 +369,19 @@
       updatePaginationButtons();
     }
 
-    // ===== ACTUALIZAR BOTONES DE PAGINACIÓN =====
+    // ===== PAGINACIÓN =====
     function updatePaginationButtons() {
       btnPrev.disabled = visibleCount <= EPISODES_PER_PAGE;
       btnNext.disabled = visibleCount >= allEpisodes.length;
     }
 
-    // ===== EVENT LISTENERS: PAGINACIÓN =====
     btnNext.addEventListener("click", () => {
       if (visibleCount < allEpisodes.length) {
         visibleCount = Math.min(
           visibleCount + EPISODES_PER_PAGE,
-          allEpisodes.length
+          allEpisodes.length,
         );
         renderEpisodes();
-        
-        window.scrollTo({
-          top: episodesContainer.offsetTop - 100,
-          behavior: "smooth",
-        });
       }
     });
 
@@ -358,19 +389,76 @@
       if (visibleCount > EPISODES_PER_PAGE) {
         visibleCount = Math.max(
           visibleCount - EPISODES_PER_PAGE,
-          EPISODES_PER_PAGE
+          EPISODES_PER_PAGE,
         );
         renderEpisodes();
-        
-        window.scrollTo({
-          top: document.querySelector(".episodes-section").offsetTop - 80,
-          behavior: "smooth",
-        });
       }
     });
 
-    // ===== INICIALIZAR AL CARGAR LA PÁGINA =====
+    // ===== MENÚ MÓVIL =====
+    if (mobileMenuToggle && navLinks) {
+      mobileMenuToggle.addEventListener("click", () => {
+        navLinks.classList.toggle("nav-links--open");
+      });
+
+      navLinks.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          navLinks.classList.remove("nav-links--open");
+        });
+      });
+    }
+
+    // ===== SCROLL SUAVE NAVBAR (CON COMPENSACIÓN) =====
+    const navbar = document.querySelector(".navbar");
+    const NAVBAR_OFFSET = navbar ? navbar.offsetHeight : 0;
+
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener("click", (event) => {
+        const href = link.getAttribute("href");
+        if (!href || href === "#") return;
+
+        const targetId = href.substring(1);
+        const targetEl = document.getElementById(targetId);
+        if (!targetEl) return;
+
+        event.preventDefault();
+        const rect = targetEl.getBoundingClientRect();
+        const scrollTop = window.scrollY || window.pageYOffset;
+        const offset = rect.top + scrollTop - NAVBAR_OFFSET;
+
+        window.scrollTo({
+          top: offset,
+          behavior: "smooth",
+        });
+
+        if (navLinks) navLinks.classList.remove("nav-links--open");
+      });
+    });
+
+    // ===== REPRODUCIR / MOSTRAR EN REPRODUCTOR PRINCIPAL =====
+    function playEpisodeInMainPlayer(episode) {
+      const mainAudioPlayer = document.getElementById("mainAudioPlayer");
+      const currentEpisodeImage = document.getElementById("currentEpisodeImage");
+      const currentEpisodeTitle = document.getElementById("currentEpisodeTitle");
+
+      if (!mainAudioPlayer || !currentEpisodeImage || !currentEpisodeTitle || !episode) return;
+
+      currentEpisodeImage.src = episode.imageUrl;
+      currentEpisodeImage.alt = episode.title;
+      currentEpisodeTitle.textContent = episode.title;
+
+      const newSource = document.createElement("source");
+      newSource.src = episode.audioUrl || "";
+      newSource.type = "audio/mpeg";
+
+      mainAudioPlayer.innerHTML = "";
+      mainAudioPlayer.appendChild(newSource);
+      mainAudioPlayer.load(); // El usuario decide cuándo darle al play
+    }
+
+    // ===== INICIALIZAR =====
     loadEpisodesFromRSS();
   </script>
+
 </body>
 </html>
