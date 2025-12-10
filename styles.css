@@ -490,19 +490,22 @@ a {
   color: #e1d0f0;
   padding: 1.5rem 0;
   font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .footer-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
+  flex-wrap: wrap;
 }
 
 .podcast-platforms {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .platform-link {
@@ -513,6 +516,12 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.platform-link svg {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
 .platform-link:hover {
