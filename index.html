@@ -4,7 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mantones y Misterios - Podcast</title>
+
+  <!-- FAVICONS / PWA BASICS -->
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png" />
+  <link rel="icon" href="img/favicon.ico" />
+  <meta name="theme-color" content="#503a65" />
+
   <link rel="stylesheet" href="styles.css" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -16,7 +25,7 @@
     <div class="nav-container">
       <a href="#inicio" class="logo">
         <div class="logo-icon">
-          <img src="img/Logo.png" alt="Logo EMYS">
+          <img src="img/Logo.png" alt="Logo Mantones y Misterios">
         </div>
         <span>Mantones y Misterios</span>
       </a>
@@ -33,6 +42,7 @@
     </div>
   </header>
 
+  <!-- MENÚ MÓVIL -->
   <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Abrir menú de navegación">
     ☰
   </button>
@@ -42,62 +52,100 @@
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <span class="hero-tagline">🎧 Narrado por Sintia Alvarado</span>
+
       <h1 class="hero-title">
         Entre <br />
         <span>Mantones y Misterios</span>
       </h1>
 
       <p class="hero-meta">
-        Nuevo episodio cada mes
+        Relatos del Perú oculto · Nuevo episodio cada mes
       </p>
 
       <div class="hero-actions">
+        <!-- Botón que baja al reproductor de la página -->
         <a href="#player" class="btn btn-play">
           <span class="play-icon">▶</span>
         </a>
-        <span class="hero-actions-text">🎧 Comienza el relato</span>
+        <span class="hero-actions-text">Comienza el relato aquí</span>
+
+        <!-- Botón directo a Spotify -->
+        <a
+          href="https://open.spotify.com/show/0pkfh76wm3tz1cGTwlLYNL"
+          class="btn btn-hero-spotify"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+            style="margin-right: 0.5rem; flex-shrink: 0;"
+          >
+            <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.28 17.35a.89.89 0 0 1-1.23.3c-3.36-2.06-7.59-2.53-12.57-1.38a.89.89 0 0 1-.41-1.74c5.45-1.28 10.17-.74 13.9 1.61.42.26.55.82.31 1.21zm1.33-3.22a1.1 1.1 0 0 1-1.52.37c-3.85-2.37-9.71-3.06-14.25-1.65a1.1 1.1 0 0 1-.64-2.11c5.19-1.58 11.6-.8 15.96 1.9.51.32.67 1 .35 1.49zm.16-3.39C14.5 8.02 9.45 7.83 5.24 9.12a1.31 1.31 0 1 1-.75-2.51c4.79-1.44 10.57-1.21 15.43 1.85a1.31 1.31 0 0 1-1.35 2.27z" />
+          </svg>
+          Escuchar en Spotify
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- SECCIÓN SPOTIFY -->
+  <!-- SECCIÓN REPRODUCTOR PRINCIPAL -->
   <section class="spotify-section" id="player">
     <div class="container spotify-container">
       <div class="spotify-text">
         <h2>Historias que susurran desde el Perú</h2>
         <p>
-          Desde el corazón de Perú, narramos historias que el tiempo no pudo borrar: leyendas, sucesos y memorias que aún buscan ser escuchadas
+          Desde el corazón de Perú, narramos historias que el tiempo no pudo borrar: leyendas,
+          sucesos y memorias que aún buscan ser escuchadas.
         </p>
       </div>
 
       <div class="spotify-player" id="audioPlayerContainer">
-        <div style="background: linear-gradient(135deg, #fbf1e6 0%, #f5e6d3 100%);
-                    border-radius: 12px; padding: 2rem; color: #6b5b95;">
+        <div style="
+          background: linear-gradient(135deg, #fbf1e6 0%, #f5e6d3 100%);
+          border-radius: 12px;
+          padding: 2rem;
+          color: #6b5b95;
+        ">
           <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
             <img
               id="currentEpisodeImage"
-              src="https://www.omnycontent.com/d/clips/e73c998e-6e60-432f-8610-ae210140c5b1/b3c9b6e7-72ba-45c4-aff9-b1e7012d213b/412bce96-9714-4947-89ed-b3a6010caa93/image.jpg?t=1764606472&amp;size=Large"
-              alt="Señales de vida"
-              style="width: 120px; height: 120px; border-radius: 8px;
-                     object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);"
+              src="img/Mantonesymisterios.jpeg"
+              alt="Último episodio de Mantones y Misterios"
+              style="
+                width: 120px;
+                height: 120px;
+                border-radius: 8px;
+                object-fit: cover;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+              "
             >
             <div style="flex: 1; min-width: 200px;">
-              <p style="margin: 0 0 0.5rem 0; opacity: 0.8; font-size: 0.85rem;
-                        text-transform: uppercase; letter-spacing: 1px;">
+              <p style="
+                margin: 0 0 0.5rem 0;
+                opacity: 0.8;
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              ">
                 Último episodio
               </p>
-              <h3 id="currentEpisodeTitle" style="margin: 0 0 1rem 0; font-size: 1.3rem; line-height: 1.3;">
-                Señales de vida
+              <h3
+                id="currentEpisodeTitle"
+                style="margin: 0 0 1rem 0; font-size: 1.3rem; line-height: 1.3;"
+              >
+                Cargando episodio...
               </h3>
+
               <audio
                 id="mainAudioPlayer"
                 controls
                 style="width: 100%; margin-top: 1rem;"
               >
-                <source
-                  src="https://podtrac.com/pts/redirect.mp3/traffic.omny.fm/d/clips/e73c998e-6e60-432f-8610-ae210140c5b1/b3c9b6e7-72ba-45c4-aff9-b1e7012d213b/412bce96-9714-4947-89ed-b3a6010caa93/audio.mp3?utm_source=Podcast&amp;in_playlist=092b66a8-4329-4183-bb12-b1e7012d216f"
-                  type="audio/mpeg"
-                >
+                <source src="" type="audio/mpeg">
                 Tu navegador no soporta el elemento de audio.
               </audio>
             </div>
@@ -114,12 +162,13 @@
         <header class="episodes-header">
           <h2>Crónicas del Perú oculto</h2>
           <p>
-            Aquí se reúnen todos los relatos publicados hasta ahora. Historias nacidas en Lima y en los rincones más olvidados de Perú.
+            Aquí se reúnen todos los relatos publicados hasta ahora. Historias nacidas en Lima
+            y en los rincones más olvidados de Perú.
           </p>
         </header>
 
         <div id="episodesContainer" class="episodes-container">
-          <p class="loading">Cargando episodios...</p>
+          <p class="loading">Cargando episodios.</p>
         </div>
       </div>
     </section>
@@ -141,57 +190,111 @@
   <footer class="footer">
     <div class="container footer-content">
       <p>Mantones y Misterios · Podcast desde Perú</p>
+
       <div class="podcast-platforms">
         <!-- Spotify -->
-        <a href="#" class="platform-link" title="Escucha en Spotify">
+        <a
+          href="https://open.spotify.com/show/0pkfh76wm3tz1cGTwlLYNL"
+          class="platform-link"
+          title="Escucha en Spotify"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.28 17.35a.89.89 0 0 1-1.23.3c-3.36-2.06-7.59-2.53-12.57-1.38a.89.89 0 0 1-.41-1.74c5.45-1.28 10.17-.74 13.9 1.61.42.26.55.82.31 1.21zm1.33-3.22a1.1 1.1 0 0 1-1.52.37c-3.85-2.37-9.71-3.06-14.25-1.65a1.1 1.1 0 0 1-.64-2.11c5.19-1.58 11.6-.8 15.96 1.9.51.32.67 1 .35 1.49zm.16-3.39C14.5 8.02 9.45 7.83 5.24 9.12a1.31 1.31 0 1 1-.75-2.51c4.79-1.44 10.57-1.21 15.43 1.85a1.31 1.31 0 0 1-1.35 2.27z" />
           </svg>
         </a>
 
         <!-- Apple Podcasts -->
-        <a href="#" class="platform-link" title="Escucha en Apple Podcasts">
+        <a
+          href="https://podcasts.apple.com/us/podcast/entre-mantones-y-misterios/id1859290149"
+          class="platform-link"
+          title="Escucha en Apple Podcasts"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 3.25a2.25 2.25 0 1 1 0 4.5 2.25 2.25 0 0 1 0-4.5zM9.5 12c0-1.378 1.122-2.5 2.5-2.5s2.5 1.122 2.5 2.5c0 1.027-.617 1.909-1.5 2.285V18a1 1 0 1 1-2 0v-3.715A2.494 2.494 0 0 1 9.5 12zm-2 0c0-2.481 1.815-4.543 4.25-4.95a.75.75 0 0 1 .5 1.414C10.827 8.78 9.5 10.248 9.5 12a.75.75 0 0 1-1.5 0zm9.5 0a.75.75 0 0 1-1.5 0c0-1.752-1.327-3.22-3.25-3.536a.75.75 0 1 1 .5-1.414C15.685 7.457 17 9.519 17 12z" />
           </svg>
         </a>
 
-        <!-- YouTube / YouTube Music -->
-        <a href="#" class="platform-link" title="Escucha en YouTube / YouTube Music">
+        <!-- RSS (Anchor) -->
+        <a
+          href="https://anchor.fm/s/10c6409d0/podcast/rss"
+          class="platform-link"
+          title="Ver feed RSS"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M23.5 6.2a2.85 2.85 0 0 0-2-2C19.8 3.75 12 3.75 12 3.75s-7.8 0-9.5.45a2.85 2.85 0 0 0-2 2C0 7.9 0 12 0 12s0 4.1.5 5.8a2.85 2.85 0 0 0 2 2C4.2 20.25 12 20.25 12 20.25s7.8 0 9.5-.45a2.85 2.85 0 0 0 2-2C24 16.1 24 12 24 12s0-4.1-.5-5.8zM9.75 15.5v-7l6 3.5-6 3.5z" />
+            <path d="M4 4a2 2 0 0 0-2 2v2a1 1 0 0 0 1 1c6.627 0 12 5.373 12 12a1 1 0 0 0 1 1h2a2 2 0 0 0 2-2C20 11.82 12.18 4 3 4H2v2a2 2 0 0 0 2 2h0z"/>
+            <path d="M4 12a2 2 0 0 0-2 2v2a1 1 0 0 0 1 1c2.761 0 5 2.239 5 5a1 1 0 0 0 1 1h2a2 2 0 0 0 2-2c0-4.971-4.029-9-9-9H4z"/>
+            <circle cx="5" cy="19" r="2" />
           </svg>
         </a>
 
-        <!-- RSS -->
-        <a href="#" class="platform-link" title="Ver feed RSS (base técnica)">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M5 4a2 2 0 0 0-2 2v2a1 1 0 0 0 1 1c7.18 0 13 5.82 13 13a1 1 0 0 0 1 1h2a2 2 0 0 0 2-2C22 11.402 12.598 2 1 2H0v2a2 2 0 0 0 2 2h1Z" transform="scale(.5) translate(4 4)" />
-            <circle cx="6" cy="18" r="2" />
-          </svg>
-        </a>
-
-        <!-- Castbox (genérico) -->
-        <a href="#" class="platform-link" title="Escucha en Castbox">
+        <!-- Castbox -->
+        <a
+          href="https://castbox.fm/channel/id6902942?country=es"
+          class="platform-link"
+          title="Escucha en Castbox"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="4" y="4" width="16" height="16" rx="4" />
             <path d="M10 9v6l4-3z" />
           </svg>
         </a>
 
-        <!-- Podtail (genérico) -->
-        <a href="#" class="platform-link" title="Escucha en Podtail">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="6" />
-            <path d="M12 8v4l2 2" />
+        <!-- YouTube / Podcasts -->
+        <a
+          href="https://www.youtube.com/@Mantonesymisterios/podcasts"
+          class="platform-link"
+          title="Escucha en YouTube Podcasts"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M23.5 6.2a2.85 2.85 0 0 0-2-2C19.8 3.75 12 3.75 12 3.75s-7.8 0-9.5.45a2.85 2.85 0 0 0-2 2C0 7.9 0 12 0 12s0 4.1.5 5.8a2.85 2.85 0 0 0 2 2C4.2 20.25 12 20.25 12 20.25s7.8 0 9.5-.45a2.85 2.85 0 0 0 2-2C24 16.1 24 12 24 12s0-4.1-.5-5.8zM9.75 15.5v-7l6 3.5-6 3.5z" />
+          </svg>
+        </a>
+
+        <!-- Instagram -->
+        <a
+          href="https://www.instagram.com/mantonesymisterios/"
+          class="platform-link"
+          title="Síguenos en Instagram"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17" cy="7" r="1.2" />
+          </svg>
+        </a>
+
+        <!-- TikTok -->
+        <a
+          href="https://www.tiktok.com/@mantonesymisterios"
+          class="platform-link"
+          title="Síguenos en TikTok"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M16.5 3.5c.5 1.4 1.6 2.5 3 3v3.1c-1.2-.1-2.3-.5-3.4-1.1v5.9c0 3.5-2.3 5.9-5.6 5.9-3 0-5.4-2.3-5.4-5.3 0-3 2.4-5.3 5.4-5.3.4 0 .8 0 1.1.1v3.1c-.3-.1-.6-.1-.9-.1-1.3 0-2.4 1-2.4 2.3 0 1.3 1 2.3 2.4 2.3 1.4 0 2.4-1 2.4-2.6V3.5h3z" />
           </svg>
         </a>
       </div>
 
       <div class="footer-links">
-        <a href="#">Privacy policy</a>
+        <a href="#inicio">Volver arriba</a>
         <span>·</span>
-        <a href="#">Terms &amp; conditions</a>
+        <a href="#">Política de Privacidad</a>
+        <span>·</span>
+        <a href="#">Términos y Condiciones de Uso</a>
       </div>
 
       <div class="footer-copyright">
@@ -203,10 +306,7 @@
   <!-- JS: RSS2JSON + PAGINACIÓN -->
   <script>
     // ===== CONFIGURACIÓN =====
-
-    const PODCAST_RSS = "https://feeds.feedburner.com/radioambulante";
-    // const PODCAST_RSS = "https://anchor.fm/s/TU_ID/podcast/rss";
-
+    const PODCAST_RSS = "https://anchor.fm/s/10c6409d0/podcast/rss";
     const RSS_API = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(PODCAST_RSS)}`;
     const EPISODES_PER_PAGE = 4;
     const DEBUG = true;
@@ -225,9 +325,9 @@
     // ===== CARGAR FEED =====
     async function loadEpisodesFromRSS() {
       try {
-        episodesContainer.innerHTML = '<p class="loading">Cargando episodios...</p>';
+        episodesContainer.innerHTML = '<p class="loading">Cargando episodios.</p>';
 
-        if (DEBUG) console.log("🔄 Cargando feed desde RSS2JSON...");
+        if (DEBUG) console.log("🔄 Cargando feed desde RSS2JSON.");
 
         const response = await fetch(RSS_API);
         if (!response.ok) {
@@ -336,8 +436,7 @@
             <span class="episode-category">Podcast</span>
             <h2 class="episode-title">${ep.title}</h2>
             <p class="episode-meta">
-              Episodio ${allEpisodes.length - ep.index}
-              ${dateText ? " • " + dateText : ""}
+              ${dateText ? dateText : ""}
             </p>
             <p class="episode-description">${shortDesc}</p>
             <div class="episode-inline-player"></div>
@@ -435,7 +534,7 @@
       });
     });
 
-    // ===== REPRODUCIR / MOSTRAR EN REPRODUCTOR PRINCIPAL =====
+    // ===== REPRODUCIR EN REPRODUCTOR PRINCIPAL =====
     function playEpisodeInMainPlayer(episode) {
       const mainAudioPlayer = document.getElementById("mainAudioPlayer");
       const currentEpisodeImage = document.getElementById("currentEpisodeImage");
@@ -453,7 +552,7 @@
 
       mainAudioPlayer.innerHTML = "";
       mainAudioPlayer.appendChild(newSource);
-      mainAudioPlayer.load(); // El usuario decide cuándo darle al play
+      mainAudioPlayer.load();
     }
 
     // ===== INICIALIZAR =====
